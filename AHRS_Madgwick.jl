@@ -28,25 +28,25 @@ function AHRS_update_IMU( gx,  gy,  gz,  ax,  ay,  az, q0, q1, q2, q3)
 		az *= recipNorm   
 
 		# Auxiliary variables to avoid repeated arithmetic
-		_2q0 = 2.0 * q0
-		_2q1 = 2.0 * q1
-		_2q2 = 2.0 * q2
-		_2q3 = 2.0 * q3
-		_4q0 = 4.0 * q0
-		_4q1 = 4.0 * q1
-		_4q2 = 4.0 * q2
-		_8q1 = 8.0 * q1
-		_8q2 = 8.0 * q2
+		two_q0 = 2.0 * q0
+		two_q1 = 2.0 * q1
+		two_q2 = 2.0 * q2
+		two_q3 = 2.0 * q3
+		four_q0 = 4.0 * q0
+		four_q1 = 4.0 * q1
+		four_q2 = 4.0 * q2
+		eight_q1 = 8.0 * q1
+		eight_q2 = 8.0 * q2
 		q0q0 = q0 * q0
 		q1q1 = q1 * q1
 		q2q2 = q2 * q2
 		q3q3 = q3 * q3
 
 		# Gradient decent algorithm corrective step
-		s0 = _4q0 * q2q2 + _2q2 * ax + _4q0 * q1q1 - _2q1 * ay
-		s1 = _4q1 * q3q3 - _2q3 * ax + 4.0 * q0q0 * q1 - _2q0 * ay - _4q1 + _8q1 * q1q1 + _8q1 * q2q2 + _4q1 * az
-		s2 = 4.0 * q0q0 * q2 + _2q0 * ax + _4q2 * q3q3 - _2q3 * ay - _4q2 + _8q2 * q1q1 + _8q2 * q2q2 + _4q2 * az
-		s3 = 4.0 * q1q1 * q3 - _2q1 * ax + 4.0 * q2q2 * q3 - _2q2 * ay
+		s0 = four_q0 * q2q2 + two_q2 * ax + four_q0 * q1q1 - two_q1 * ay
+		s1 = four_q1 * q3q3 - two_q3 * ax + 4.0 * q0q0 * q1 - two_q0 * ay - four_q1 + eight_q1 * q1q1 + eight_q1 * q2q2 + four_q1 * az
+		s2 = 4.0 * q0q0 * q2 + two_q0 * ax + four_q2 * q3q3 - two_q3 * ay - four_q2 + eight_q2 * q1q1 + eight_q2 * q2q2 + four_q2 * az
+		s3 = 4.0 * q1q1 * q3 - two_q1 * ax + 4.0 * q2q2 * q3 - two_q2 * ay
 		recipNorm = invsqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3) # normalise step magnitude
 		s0 *= recipNorm
 		s1 *= recipNorm
@@ -107,16 +107,16 @@ function AHRS_update( gx,  gy,  gz,  ax,  ay,  az,  mx,  my,  mz, q0, q1, q2, q3
 		mz = mz * recipNorm
 
 		# Auxiliary variables to avoid repeated arithmetic
-		_2q0mx = 2.0 * q0 * mx
-		_2q0my = 2.0 * q0 * my
-		_2q0mz = 2.0 * q0 * mz
-		_2q1mx = 2.0 * q1 * mx
-		_2q0 = 2.0 * q0
-		_2q1 = 2.0 * q1
-		_2q2 = 2.0 * q2
-		_2q3 = 2.0 * q3
-		_2q0q2 = 2.0 * q0 * q2
-		_2q2q3 = 2.0 * q2 * q3
+		two_q0mx = 2.0 * q0 * mx
+		two_q0my = 2.0 * q0 * my
+		two_q0mz = 2.0 * q0 * mz
+		two_q1mx = 2.0 * q1 * mx
+		two_q0 = 2.0 * q0
+		two_q1 = 2.0 * q1
+		two_q2 = 2.0 * q2
+		two_q3 = 2.0 * q3
+		two_q0q2 = 2.0 * q0 * q2
+		two_q2q3 = 2.0 * q2 * q3
 		q0q0 = q0 * q0
 		q0q1 = q0 * q1
 		q0q2 = q0 * q2
@@ -129,18 +129,18 @@ function AHRS_update( gx,  gy,  gz,  ax,  ay,  az,  mx,  my,  mz, q0, q1, q2, q3
 		q3q3 = q3 * q3
 
 		# Reference direction of Earth's magnetic field
-		hx = mx * q0q0 - _2q0my * q3 + _2q0mz * q2 + mx * q1q1 + _2q1 * my * q2 + _2q1 * mz * q3 - mx * q2q2 - mx * q3q3
-		hy = _2q0mx * q3 + my * q0q0 - _2q0mz * q1 + _2q1mx * q2 - my * q1q1 + my * q2q2 + _2q2 * mz * q3 - my * q3q3
-		_2bx = sqrt(hx * hx + hy * hy)
-		_2bz = -_2q0mx * q2 + _2q0my * q1 + mz * q0q0 + _2q1mx * q3 - mz * q1q1 + _2q2 * my * q3 - mz * q2q2 + mz * q3q3
-		_4bx = 2.0 * _2bx
-		_4bz = 2.0 * _2bz
+		hx = mx * q0q0 - two_q0my * q3 + two_q0mz * q2 + mx * q1q1 + two_q1 * my * q2 + two_q1 * mz * q3 - mx * q2q2 - mx * q3q3
+		hy = two_q0mx * q3 + my * q0q0 - two_q0mz * q1 + two_q1mx * q2 - my * q1q1 + my * q2q2 + two_q2 * mz * q3 - my * q3q3
+		two_bx = sqrt(hx * hx + hy * hy)
+		two_bz = -two_q0mx * q2 + two_q0my * q1 + mz * q0q0 + two_q1mx * q3 - mz * q1q1 + two_q2 * my * q3 - mz * q2q2 + mz * q3q3
+		four_bx = 2.0 * two_bx
+		four_bz = 2.0 * two_bz
 
 		# Gradient decent algorithm corrective step
-		s0 = -_2q2 * (2.0 * q1q3 - _2q0q2 - ax) + _2q1 * (2.0 * q0q1 + _2q2q3 - ay) - _2bz * q2 * (_2bx * (0.5f - q2q2 - q3q3) + _2bz * (q1q3 - q0q2) - mx) + (-_2bx * q3 + _2bz * q1) * (_2bx * (q1q2 - q0q3) + _2bz * (q0q1 + q2q3) - my) + _2bx * q2 * (_2bx * (q0q2 + q1q3) + _2bz * (0.5f - q1q1 - q2q2) - mz)
-		s1 = _2q3 * (2.0 * q1q3 - _2q0q2 - ax) + _2q0 * (2.0 * q0q1 + _2q2q3 - ay) - 4.0 * q1 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - az) + _2bz * q3 * (_2bx * (0.5f - q2q2 - q3q3) + _2bz * (q1q3 - q0q2) - mx) + (_2bx * q2 + _2bz * q0) * (_2bx * (q1q2 - q0q3) + _2bz * (q0q1 + q2q3) - my) + (_2bx * q3 - _4bz * q1) * (_2bx * (q0q2 + q1q3) + _2bz * (0.5f - q1q1 - q2q2) - mz)
-		s2 = -_2q0 * (2.0 * q1q3 - _2q0q2 - ax) + _2q3 * (2.0 * q0q1 + _2q2q3 - ay) - 4.0 * q2 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - az) + (-_4bx * q2 - _2bz * q0) * (_2bx * (0.5f - q2q2 - q3q3) + _2bz * (q1q3 - q0q2) - mx) + (_2bx * q1 + _2bz * q3) * (_2bx * (q1q2 - q0q3) + _2bz * (q0q1 + q2q3) - my) + (_2bx * q0 - _4bz * q2) * (_2bx * (q0q2 + q1q3) + _2bz * (0.5f - q1q1 - q2q2) - mz)
-		s3 = _2q1 * (2.0 * q1q3 - _2q0q2 - ax) + _2q2 * (2.0 * q0q1 + _2q2q3 - ay) + (-_4bx * q3 + _2bz * q1) * (_2bx * (0.5f - q2q2 - q3q3) + _2bz * (q1q3 - q0q2) - mx) + (-_2bx * q0 + _2bz * q2) * (_2bx * (q1q2 - q0q3) + _2bz * (q0q1 + q2q3) - my) + _2bx * q1 * (_2bx * (q0q2 + q1q3) + _2bz * (0.5f - q1q1 - q2q2) - mz)
+		s0 = -two_q2 * (2.0 * q1q3 - two_q0q2 - ax) + two_q1 * (2.0 * q0q1 + two_q2q3 - ay) - two_bz * q2 * (two_bx * (0.5f - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (-two_bx * q3 + two_bz * q1) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + two_bx * q2 * (two_bx * (q0q2 + q1q3) + two_bz * (0.5f - q1q1 - q2q2) - mz)
+		s1 = two_q3 * (2.0 * q1q3 - two_q0q2 - ax) + two_q0 * (2.0 * q0q1 + two_q2q3 - ay) - 4.0 * q1 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - az) + two_bz * q3 * (two_bx * (0.5f - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (two_bx * q2 + two_bz * q0) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + (two_bx * q3 - four_bz * q1) * (two_bx * (q0q2 + q1q3) + two_bz * (0.5f - q1q1 - q2q2) - mz)
+		s2 = -two_q0 * (2.0 * q1q3 - two_q0q2 - ax) + two_q3 * (2.0 * q0q1 + two_q2q3 - ay) - 4.0 * q2 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - az) + (-four_bx * q2 - two_bz * q0) * (two_bx * (0.5f - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (two_bx * q1 + two_bz * q3) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + (two_bx * q0 - four_bz * q2) * (two_bx * (q0q2 + q1q3) + two_bz * (0.5f - q1q1 - q2q2) - mz)
+		s3 = two_q1 * (2.0 * q1q3 - two_q0q2 - ax) + two_q2 * (2.0 * q0q1 + two_q2q3 - ay) + (-four_bx * q3 + two_bz * q1) * (two_bx * (0.5f - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (-two_bx * q0 + two_bz * q2) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + two_bx * q1 * (two_bx * (q0q2 + q1q3) + two_bz * (0.5f - q1q1 - q2q2) - mz)
 		recipNorm = invsqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3) # normalise step magnitude
 		s0 = s0 * recipNorm
 		s1 = s1 * recipNorm
