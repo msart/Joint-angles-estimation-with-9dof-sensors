@@ -185,7 +185,7 @@ x = 1
 y = 0
 print(q0," ", q1," ", q2," ", q3, " \n")
 
-for i = 1:100 
+for i = 0:100 
     q0, q1, q2, q3 = AHRS_update(gx, gy, gz, ax, ay, az, mx, my, mz, q0, q1, q2, q3)
     print(q0," ", q1," ", q2," ", q3, " \n")
 end
