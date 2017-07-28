@@ -23,9 +23,9 @@ function AHRS_update_IMU( gx,  gy,  gz,  ax,  ay,  az, q0, q1, q2, q3)
 
 		# Normalise accelerometer measurement
 		recipNorm = invsqrt(ax * ax + ay * ay + az * az)
-		ax *= recipNorm
-		ay *= recipNorm
-		az *= recipNorm   
+		ax = ax * recipNorm
+		ay = ay * recipNorm
+		az = az * recipNorm   
 
 		# Auxiliary variables to avoid repeated arithmetic
 		two_q0 = 2.0 * q0
@@ -48,10 +48,10 @@ function AHRS_update_IMU( gx,  gy,  gz,  ax,  ay,  az, q0, q1, q2, q3)
 		s2 = 4.0 * q0q0 * q2 + two_q0 * ax + four_q2 * q3q3 - two_q3 * ay - four_q2 + eight_q2 * q1q1 + eight_q2 * q2q2 + four_q2 * az
 		s3 = 4.0 * q1q1 * q3 - two_q1 * ax + 4.0 * q2q2 * q3 - two_q2 * ay
 		recipNorm = invsqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3) # normalise step magnitude
-		s0 *= recipNorm
-		s1 *= recipNorm
-		s2 *= recipNorm
-		s3 *= recipNorm
+		s0 = s0 * recipNorm
+		s1 = s1 * recipNorm
+		s2 = s2 * recipNorm
+		s3 = s3 * recipNorm
 
 		# Apply feedback step
 		qDot1 = qDot1 - beta * s0
@@ -137,10 +137,10 @@ function AHRS_update( gx,  gy,  gz,  ax,  ay,  az,  mx,  my,  mz, q0, q1, q2, q3
 		four_bz = 2.0 * two_bz
 
 		# Gradient decent algorithm corrective step
-		s0 = -two_q2 * (2.0 * q1q3 - two_q0q2 - ax) + two_q1 * (2.0 * q0q1 + two_q2q3 - ay) - two_bz * q2 * (two_bx * (0.5f - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (-two_bx * q3 + two_bz * q1) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + two_bx * q2 * (two_bx * (q0q2 + q1q3) + two_bz * (0.5f - q1q1 - q2q2) - mz)
-		s1 = two_q3 * (2.0 * q1q3 - two_q0q2 - ax) + two_q0 * (2.0 * q0q1 + two_q2q3 - ay) - 4.0 * q1 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - az) + two_bz * q3 * (two_bx * (0.5f - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (two_bx * q2 + two_bz * q0) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + (two_bx * q3 - four_bz * q1) * (two_bx * (q0q2 + q1q3) + two_bz * (0.5f - q1q1 - q2q2) - mz)
-		s2 = -two_q0 * (2.0 * q1q3 - two_q0q2 - ax) + two_q3 * (2.0 * q0q1 + two_q2q3 - ay) - 4.0 * q2 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - az) + (-four_bx * q2 - two_bz * q0) * (two_bx * (0.5f - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (two_bx * q1 + two_bz * q3) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + (two_bx * q0 - four_bz * q2) * (two_bx * (q0q2 + q1q3) + two_bz * (0.5f - q1q1 - q2q2) - mz)
-		s3 = two_q1 * (2.0 * q1q3 - two_q0q2 - ax) + two_q2 * (2.0 * q0q1 + two_q2q3 - ay) + (-four_bx * q3 + two_bz * q1) * (two_bx * (0.5f - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (-two_bx * q0 + two_bz * q2) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + two_bx * q1 * (two_bx * (q0q2 + q1q3) + two_bz * (0.5f - q1q1 - q2q2) - mz)
+		s0 = -two_q2 * (2.0 * q1q3 - two_q0q2 - ax) + two_q1 * (2.0 * q0q1 + two_q2q3 - ay) - two_bz * q2 * (two_bx * (0.5 - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (-two_bx * q3 + two_bz * q1) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + two_bx * q2 * (two_bx * (q0q2 + q1q3) + two_bz * (0.5 - q1q1 - q2q2) - mz)
+		s1 = two_q3 * (2.0 * q1q3 - two_q0q2 - ax) + two_q0 * (2.0 * q0q1 + two_q2q3 - ay) - 4.0 * q1 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - az) + two_bz * q3 * (two_bx * (0.5 - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (two_bx * q2 + two_bz * q0) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + (two_bx * q3 - four_bz * q1) * (two_bx * (q0q2 + q1q3) + two_bz * (0.5 - q1q1 - q2q2) - mz)
+		s2 = -two_q0 * (2.0 * q1q3 - two_q0q2 - ax) + two_q3 * (2.0 * q0q1 + two_q2q3 - ay) - 4.0 * q2 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - az) + (-four_bx * q2 - two_bz * q0) * (two_bx * (0.5 - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (two_bx * q1 + two_bz * q3) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + (two_bx * q0 - four_bz * q2) * (two_bx * (q0q2 + q1q3) + two_bz * (0.5 - q1q1 - q2q2) - mz)
+		s3 = two_q1 * (2.0 * q1q3 - two_q0q2 - ax) + two_q2 * (2.0 * q0q1 + two_q2q3 - ay) + (-four_bx * q3 + two_bz * q1) * (two_bx * (0.5 - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (-two_bx * q0 + two_bz * q2) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + two_bx * q1 * (two_bx * (q0q2 + q1q3) + two_bz * (0.5 - q1q1 - q2q2) - mz)
 		recipNorm = invsqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3) # normalise step magnitude
 		s0 = s0 * recipNorm
 		s1 = s1 * recipNorm
@@ -187,6 +187,10 @@ print(q0," ", q1," ", q2," ", q3, " \n")
 
 for i = 0:100 
     q0, q1, q2, q3 = AHRS_update(gx, gy, gz, ax, ay, az, mx, my, mz, q0, q1, q2, q3)
+    roll = atan2(q0*q1 + q2*q3, 0.5 - q1*q1 - q2*q2);
+	pitch = asin(-2.0 * (q1*q3 - q0*q2));
+	yaw = atan2(q1*q2 + q0*q3, 0.5 - q2*q2 - q3*q3);
+	#print(roll," ", pitch," ", yaw," ", " \n")
     print(q0," ", q1," ", q2," ", q3, " \n")
 end
     
