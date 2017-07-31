@@ -153,7 +153,9 @@ function AHRS_update( gx,  gy,  gz,  ax,  ay,  az,  mx,  my,  mz, q0, q1, q2, q3
 		s1 = two_q3 * (2.0 * q1q3 - two_q0q2 - ax) + two_q0 * (2.0 * q0q1 + two_q2q3 - ay) - 4.0 * q1 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - az) + two_bz * q3 * (two_bx * (0.5 - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (two_bx * q2 + two_bz * q0) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + (two_bx * q3 - four_bz * q1) * (two_bx * (q0q2 + q1q3) + two_bz * (0.5 - q1q1 - q2q2) - mz)
 		s2 = -two_q0 * (2.0 * q1q3 - two_q0q2 - ax) + two_q3 * (2.0 * q0q1 + two_q2q3 - ay) - 4.0 * q2 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - az) + (-four_bx * q2 - two_bz * q0) * (two_bx * (0.5 - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (two_bx * q1 + two_bz * q3) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + (two_bx * q0 - four_bz * q2) * (two_bx * (q0q2 + q1q3) + two_bz * (0.5 - q1q1 - q2q2) - mz)
 		s3 = two_q1 * (2.0 * q1q3 - two_q0q2 - ax) + two_q2 * (2.0 * q0q1 + two_q2q3 - ay) + (-four_bx * q3 + two_bz * q1) * (two_bx * (0.5 - q2q2 - q3q3) + two_bz * (q1q3 - q0q2) - mx) + (-two_bx * q0 + two_bz * q2) * (two_bx * (q1q2 - q0q3) + two_bz * (q0q1 + q2q3) - my) + two_bx * q1 * (two_bx * (q0q2 + q1q3) + two_bz * (0.5 - q1q1 - q2q2) - mz)
-		norm = invsqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3) # normalise step magnitude
+		
+		#Normalizando
+		norm = invsqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3)
 		s0 = s0 * norm
 		s1 = s1 * norm
 		s2 = s2 * norm
