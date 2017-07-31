@@ -12,6 +12,7 @@ end
 
 function AHRS_update_IMU( gx,  gy,  gz,  ax,  ay,  az, q0, q1, q2, q3)
 
+
 	#quaternion rate change
 	qDot1 = 0.5 * (-q1 * gx - q2 * gy - q3 * gz)
 	qDot2 = 0.5 * (q0 * gx + q2 * gz - q3 * gy)
@@ -25,7 +26,7 @@ function AHRS_update_IMU( gx,  gy,  gz,  ax,  ay,  az, q0, q1, q2, q3)
 		recipNorm = invsqrt(ax * ax + ay * ay + az * az)
 		ax = ax * recipNorm
 		ay = ay * recipNorm
-		az = az * recipNorm   
+		az = az * recipNorm  
 
 		# Auxiliary variables to avoid repeated arithmetic
 		two_q0 = 2.0 * q0
@@ -48,6 +49,7 @@ function AHRS_update_IMU( gx,  gy,  gz,  ax,  ay,  az, q0, q1, q2, q3)
 		s2 = 4.0 * q0q0 * q2 + two_q0 * ax + four_q2 * q3q3 - two_q3 * ay - four_q2 + eight_q2 * q1q1 + eight_q2 * q2q2 + four_q2 * az
 		s3 = 4.0 * q1q1 * q3 - two_q1 * ax + 4.0 * q2q2 * q3 - two_q2 * ay
 		recipNorm = invsqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3) # normalise step magnitude
+		print(s0," ", s1," ", s2," ", s3, " ", recipNorm, " \n")
 		s0 = s0 * recipNorm
 		s1 = s1 * recipNorm
 		s2 = s2 * recipNorm
@@ -62,7 +64,11 @@ function AHRS_update_IMU( gx,  gy,  gz,  ax,  ay,  az, q0, q1, q2, q3)
 	
 
 	# Integrate rate of change of quaternion to yield quaternion
-	q0 = q0 + qDot1 * (1.0 / 512.0)
+
+	#print(recipNorm ,"\n")
+	#print(s0," ", s1," ", s2," ", s3, " \n")
+	#print(qDot1," ", qDot2," ", qDot3," ", qDot4, " \n")
+	q0 = q0 +  qDot1 * (1.0 / 512.0)
 	q1 = q1 +  qDot2 * (1.0 / 512.0)
 	q2 = q2 +  qDot3 * (1.0 / 512.0)
 	q3 = q3 +  qDot4 * (1.0 / 512.0)
@@ -154,7 +160,6 @@ function AHRS_update( gx,  gy,  gz,  ax,  ay,  az,  mx,  my,  mz, q0, q1, q2, q3
 		qDot4 = qDot4 - beta * s3
 	end
 	
-
 	# Integrate rate of change of quaternion to yield quaternion
 	q0 = q0 + qDot1 * (1.0 / 512.0)
 	q1 = q1 + qDot2 * (1.0 / 512.0)
@@ -172,25 +177,25 @@ end
 
 
 
-gx = 0.0
-gy = 0.0
-gz = 0.0
+gx = 30.0
+gy = 30.0
+gz = 30.0
 ax = 1.0
 ay = 1.0
 az = 1.0
-mx = 0.0
-my = 0.0
-mz = 0.0
+mx = 30.0
+my = 30.0
+mz = 30.0
 x = 1 
 y = 0
 print(q0," ", q1," ", q2," ", q3, " \n")
 
-for i = 0:100 
+for i = 0:9 
     q0, q1, q2, q3 = AHRS_update(gx, gy, gz, ax, ay, az, mx, my, mz, q0, q1, q2, q3)
     roll = atan2(q0*q1 + q2*q3, 0.5 - q1*q1 - q2*q2);
 	pitch = asin(-2.0 * (q1*q3 - q0*q2));
 	yaw = atan2(q1*q2 + q0*q3, 0.5 - q2*q2 - q3*q3);
-	#print(roll," ", pitch," ", yaw," ", " \n")
-    print(q0," ", q1," ", q2," ", q3, " \n")
+	print("  Angles ", roll," ", pitch," ", yaw," ", " \n")
+    #print("Quaternion ", q0," ", q1," ", q2," ", q3, " \n")
 end
     
