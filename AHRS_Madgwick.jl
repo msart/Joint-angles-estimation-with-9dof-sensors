@@ -17,22 +17,18 @@ function AHRS_update_IMU( gx,  gy,  gz,  ax,  ay,  az, q0, q1, q2, q3)
 	gy = gy * 0.0174533;
 	gz = gz * 0.0174533;
 
-	#quaternion rate change
 	qDot1 = 0.5 * (-q1 * gx - q2 * gy - q3 * gz)
 	qDot2 = 0.5 * (q0 * gx + q2 * gz - q3 * gy)
 	qDot3 = 0.5 * (q0 * gy - q1 * gz + q3 * gx)
 	qDot4 = 0.5 * (q0 * gz + q1 * gy - q2 * gx)
 
-	#Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
 	if !((ax == 0.0) && (ay == 0.0) && (az == 0.0)) 
 
-		# Normalise accelerometer measurement
 		norm = invsqrt(ax * ax + ay * ay + az * az)
 		ax = ax * norm
 		ay = ay * norm
 		az = az * norm  
 
-		# Auxiliary variables to avoid repeated arithmetic
 		two_q0 = 2.0 * q0
 		two_q1 = 2.0 * q1
 		two_q2 = 2.0 * q2
@@ -47,27 +43,23 @@ function AHRS_update_IMU( gx,  gy,  gz,  ax,  ay,  az, q0, q1, q2, q3)
 		q2q2 = q2 * q2
 		q3q3 = q3 * q3
 
-		# Gradient decent algorithm corrective step
 		s0 = four_q0 * q2q2 + two_q2 * ax + four_q0 * q1q1 - two_q1 * ay
 		s1 = four_q1 * q3q3 - two_q3 * ax + 4.0 * q0q0 * q1 - two_q0 * ay - four_q1 + eight_q1 * q1q1 + eight_q1 * q2q2 + four_q1 * az
 		s2 = 4.0 * q0q0 * q2 + two_q0 * ax + four_q2 * q3q3 - two_q3 * ay - four_q2 + eight_q2 * q1q1 + eight_q2 * q2q2 + four_q2 * az
 		s3 = 4.0 * q1q1 * q3 - two_q1 * ax + 4.0 * q2q2 * q3 - two_q2 * ay
-		norm = invsqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3) # normalise step magnitude
+		norm = invsqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3) 
 		print(s0," ", s1," ", s2," ", s3, " ", norm, " \n")
 		s0 = s0 * norm
 		s1 = s1 * norm
 		s2 = s2 * norm
 		s3 = s3 * norm
 
-		# Apply feedback step
 		qDot1 = qDot1 - beta * s0
 		qDot2 = qDot2 - beta * s1
 		qDot3 = qDot3 - beta * s2
 		qDot4 = qDot4 - beta * s3
 	end
 	
-
-	# Integrate rate of change of quaternion to yield quaternion
 
 	#print(norm ,"\n")
 	#print(s0," ", s1," ", s2," ", s3, " \n")
@@ -77,7 +69,6 @@ function AHRS_update_IMU( gx,  gy,  gz,  ax,  ay,  az, q0, q1, q2, q3)
 	q2 = q2 +  qDot3 * (1.0 / 512.0)
 	q3 = q3 +  qDot4 * (1.0 / 512.0)
 
-	# Normalise quaternion
 	norm = invsqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3)
 	q0 = q0 * norm
 	q1 = q1 * norm

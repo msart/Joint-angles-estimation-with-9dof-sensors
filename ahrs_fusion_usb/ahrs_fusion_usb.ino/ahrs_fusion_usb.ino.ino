@@ -58,8 +58,8 @@ float gyro_zero_offsets[3]      = { 0.0F, 0.0F, 0.0F };
 
 // Mahony is lighter weight as a filter and should be used
 // on slower systems
-Mahony filter;
-//Madgwick filter;
+//Mahony filter;
+Madgwick filter;
 
 void setup()
 {
