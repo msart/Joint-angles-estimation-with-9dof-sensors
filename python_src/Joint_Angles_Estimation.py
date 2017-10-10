@@ -5,45 +5,73 @@ import serial
 import AHRS_Madgwick
 
 
+def parse_sensor_data(msg):
+	s_s = s.split()
+
+	gx = float(s_s[0].decode('UTF-8'))
+	gy = float(s_s[1].decode('UTF-8'))
+	gz = float(s_s[2].decode('UTF-8'))
+	ax = float(s_s[3].decode('UTF-8'))
+	ay = float(s_s[4].decode('UTF-8'))
+	az = float(s_s[5].decode('UTF-8'))
+	mx = float(s_s[6].decode('UTF-8'))
+	my = float(s_s[7].decode('UTF-8'))
+	mz = float(s_s[8].decode('UTF-8'))
+
+	return gx, gy, gz, ax, ay, az, mx, my, mz
+
+
+def joint_angle_estimation(sensor1_pitch, sensor2_pitch):
+	return sensor1_pitch - sensor1_pitch
+
+
 def main():
-	q0 = 1.0
-	q1 = 0.0
-	q2 = 0.0
-	q3 = 0.0
-
-	ax = 0.0
-	ay = 0.0
-	az = 0.0
-	gx = 0.0
-	gy = 0.0
-	gz = 0.0
-	mx = 0.0
-	my = 0.0
-	mz = 0.0
-
-	for i in range(1,10):
-		q0,q1,q2,q3 = AHRS_Madgwick.update(ax,ay,az,gx,gy,gz,mx,my,mz,q0,q1,q2,q3)
-		print(q0,q1,q2,q3)
-		roll, pitch, yaw = AHRS_Madgwick.compute_angles(q0, q1, q2, q3)
-		print(roll, pitch, yaw)
-		ax += 1.0
-		ay += 1.0
-		az += 1.0
-		gx += 1.0
-		gy += 1.0
-		gz += 1.0
-		mx += 1.0
-		my += 1.0
-		mz += 1.0
 	# sensor_1 = serial.Serial('/dev/ttyUSB0', 9600) 
 	# sensor_2 = serial.Serial('/dev/ttyUSB1', 9600) 
 
-	# i = 0
-	# while i < 10:
-	# 	print("sensor_1 ", sensor_1.readline())
+	#forearm sensor
+	sensor1_q0 = 1.0
+	sensor1_q1 = 0.0
+	sensor1_q2 = 0.0
+	sensor1_q3 = 0.0
 
-	# 	print("sensor_2 ", sensor_2.readline())
-	# 	i += 1
+	#arm sensor
+	sensor2_q0 = 1.0
+	sensor2_q1 = 0.0
+	sensor2_q2 = 0.0
+	sensor2_q3 = 0.0
+
+	# while True:
+	for i in range(1,10):
+
+		#sensor 1 reading msg
+		msg = sensor_1.readline()
+		sensor1_ax, sensor1_ay, sensor1_az, sensor1_gx, sensor1_gy, sensor1_gz, sensor1_mx, sensor1_my, sensor1_mz = parse_sensor_data(msg)
+
+		#sensor 1 updating
+		sensor1_q0, sensor1_q1, sensor1_q2, sensor1_q3 = AHRS_Madgwick.update(sensor1_ax, sensor1_ay, sensor1_az, sensor1_gx, sensor1_gy, sensor1_gz, sensor1_mx, sensor1_my, sensor1_mz, sensor1_q0, sensor1_q1, sensor1_q2, sensor1_q3)
+		print(sensor1_q0, sensor1_q1, sensor1_q2, sensor1_q3)
+
+		#sensor 1 calculating angles
+		sensor1_roll, sensor1_pitch, sensor1_yaw = AHRS_Madgwick.compute_angles(sensor1_q0, sensor1_q1, sensor1_q2, sensor1_q3)
+		print(sensor1_roll, sensor1_pitch, sensor1_yaw)
+
+		#sensor 1 reading msg
+		msg = sensor_2.readline()
+		sensor2_ax, sensor2_ay, sensor2_az, sensor2_gx, sensor2_gy, sensor2_gz, sensor2_mx, sensor2_my, sensor2_mz = parse_sensor_data(msg)
+
+		#sensor 2 updating
+		sensor2_q0, sensor2_q1, sensor2_q2, sensor2_q3 = AHRS_Madgwick.update(sensor2_ax, sensor2_ay, sensor2_az, sensor2_gx, sensor2_gy, sensor2_gz, sensor2_mx, sensor2_my, sensor2_mz, sensor2_q0, sensor2_q1, sensor2_q2, sensor2_q3)
+		print(sensor2_q0, sensor2_q1, sensor2_q2, sensor2_q3)
+
+		#sensor 2 calculating angles
+		sensor2_roll, sensor2_pitch, sensor2_yaw = AHRS_Madgwick.compute_angles(sensor2_q0, sensor2_q1, sensor2_q2, sensor2_q3)
+		print(sensor2_roll, sensor2_pitch, sensor2_yaw)
+
+		angle = joint_angle_estimation(sensor1_pitch, sensor2_pitch)
+		print("Angle estimation: ", angle)
+
+
 
 
 main()
