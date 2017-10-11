@@ -3,6 +3,7 @@
 
 import serial
 import AHRS_Madgwick
+import socket
 
 
 def parse_sensor_data(msg):
@@ -26,6 +27,12 @@ def joint_angle_estimation(sensor1_pitch, sensor2_pitch):
 
 
 def main():
+
+	# s = socket.socket()
+	# host = socket.gethostname()
+	# port = 3000
+	# s.connect((host, port))
+
 	# sensor_1 = serial.Serial('/dev/ttyUSB0', 9600) 
 	# sensor_2 = serial.Serial('/dev/ttyUSB1', 9600) 
 
@@ -68,8 +75,15 @@ def main():
 		sensor2_roll, sensor2_pitch, sensor2_yaw = AHRS_Madgwick.compute_angles(sensor2_q0, sensor2_q1, sensor2_q2, sensor2_q3)
 		print(sensor2_roll, sensor2_pitch, sensor2_yaw)
 
+
 		angle = joint_angle_estimation(sensor1_pitch, sensor2_pitch)
 		print("Angle estimation: ", angle)
+
+
+		#normalizing and sending message to puredata
+		angle = angle / 180.0
+		message = str(angle) + ";"
+		s.send(message.encode('utf-8'))
 
 
 
