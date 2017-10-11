@@ -1,0 +1,23 @@
+#N canvas 681 300 644 461 10;
+#X obj 36 10 adc~;
+#X obj 100 352 dac~;
+#X obj 90 249 clip~ -0.5 0.5;
+#X text 208 198 <-- Amplify the sound from the guitar;
+#X text 209 248 <-- Hard-clip it to produce audible distortion;
+#X text 98 10 <-- Read audio data from the soundcard (sound of the
+guitar);
+#X text 158 353 <-- Send the processed sound back to the soundcard
+;
+#X obj 93 33 netreceive 3000;
+#X obj 90 194 *~;
+#X floatatom 131 164 5 0 0 0 - - -, f 5;
+#X obj 133 85 float;
+#X obj 140 124 * 50;
+#X connect 0 0 8 0;
+#X connect 2 0 1 0;
+#X connect 2 0 1 1;
+#X connect 7 0 10 0;
+#X connect 8 0 2 0;
+#X connect 9 0 8 1;
+#X connect 10 0 11 0;
+#X connect 11 0 9 0;
