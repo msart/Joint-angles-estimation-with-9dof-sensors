@@ -4,6 +4,7 @@ from math import asin
 
 
 beta = 0.1
+sampleFreq = 10.0
 
 def invsqrt(number):
     return number ** -0.5
@@ -46,7 +47,7 @@ def update_IMU( gx,  gy,  gz,  ax,  ay,  az, q0, q1, q2, q3):
 		s2 = 4.0 * q0q0 * q2 + two_q0 * ax + four_q2 * q3q3 - two_q3 * ay - four_q2 + eight_q2 * q1q1 + eight_q2 * q2q2 + four_q2 * az
 		s3 = 4.0 * q1q1 * q3 - two_q1 * ax + 4.0 * q2q2 * q3 - two_q2 * ay
 		norm = invsqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3) 
-		print(s0," ", s1," ", s2," ", s3, " ", norm, " \n")
+		# print(s0," ", s1," ", s2," ", s3, " ", norm, " \n")
 		s0 = s0 * norm
 		s1 = s1 * norm
 		s2 = s2 * norm
@@ -60,10 +61,10 @@ def update_IMU( gx,  gy,  gz,  ax,  ay,  az, q0, q1, q2, q3):
 	#print(norm ,"\n")
 	#print(s0," ", s1," ", s2," ", s3, " \n")
 	#print(qDot1," ", qDot2," ", qDot3," ", qDot4, " \n")
-	q0 = q0 +  qDot1 * (1.0 / 512.0)
-	q1 = q1 +  qDot2 * (1.0 / 512.0)
-	q2 = q2 +  qDot3 * (1.0 / 512.0)
-	q3 = q3 +  qDot4 * (1.0 / 512.0)	
+	q0 = q0 +  qDot1 * (1.0 / sampleFreq)
+	q1 = q1 +  qDot2 * (1.0 / sampleFreq)
+	q2 = q2 +  qDot3 * (1.0 / sampleFreq)
+	q3 = q3 +  qDot4 * (1.0 / sampleFreq)	
 
 	norm = invsqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3)
 	q0 = q0 * norm
@@ -78,6 +79,7 @@ def update( gx,  gy,  gz,  ax,  ay,  az,  mx,  my,  mz, q0, q1, q2, q3):
 	if (mx == 0.0) and (my == 0.0) and (mz == 0.0) :
 		q0, q1, q2, q3 = update_IMU(gx, gy, gz, ax, ay, az, q0, q1, q2, q3)
 		return q0, q1, q2, q3
+
 	# De graus/sec pra rad/sec
 	gx = gx * 0.0174533
 	gy = gy * 0.0174533
@@ -153,10 +155,10 @@ def update( gx,  gy,  gz,  ax,  ay,  az,  mx,  my,  mz, q0, q1, q2, q3):
 		qDot4 = qDot4 - beta * s3
 	
 	# aplicando no quaterinon
-	q0 = q0 + qDot1 * (1.0 / 512.0)
-	q1 = q1 + qDot2 * (1.0 / 512.0)
-	q2 = q2 + qDot3 * (1.0 / 512.0)
-	q3 = q3 + qDot4 * (1.0 / 512.0)
+	q0 = q0 + qDot1 * (1.0 / sampleFreq)
+	q1 = q1 + qDot2 * (1.0 / sampleFreq)
+	q2 = q2 + qDot3 * (1.0 / sampleFreq)
+	q3 = q3 + qDot4 * (1.0 / sampleFreq)
 
 	# Normalizando
 	norm = invsqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3)
@@ -172,4 +174,4 @@ def compute_angles(q0, q1, q2, q3):
 	roll = atan2(q0*q1 + q2*q3, 0.5 - q1*q1 - q2*q2);
 	pitch = asin(-2.0 * (q1*q3 - q0*q2));
 	yaw = atan2(q1*q2 + q0*q3, 0.5 - q2*q2 - q3*q3);
-	return roll, pitch, yaw
+	return roll * 57.29578, pitch * 57.29578, yaw * 57.29578 + 180.0

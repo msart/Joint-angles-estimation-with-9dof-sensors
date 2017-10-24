@@ -157,11 +157,38 @@ void loop(void)
   float heading = filter.getYaw();
   //Serial.print(millis());
   //Serial.print("Orientation: ");
-  Serial.print(heading);
-  Serial.print(" ");
-  Serial.print(pitch);
-  Serial.print(" ");
-  Serial.println(roll);
+  //Serial.print(heading);
+  //Serial.print(" ");
+  //Serial.print(pitch);
+  //Serial.print(" ");
+  //Serial.println(roll);
+  
+  //Serial.print(filter.q0);
+  //Serial.print(" ");
+  //Serial.print(filter.q1);
+  //Serial.print(" ");
+  //Serial.print(filter.q2);
+  //Serial.print(" ");
+  //Serial.println(filter.q3);
+
+    //Serial.print("Gyro_X: "); 
+  Serial.print(gx); Serial.print(" ");
+  //Serial.print("Gyro_Y: "); 
+  Serial.print(gy); Serial.print(" ");
+  //Serial.print("Gyro_Z: "); 
+  Serial.print(gz); Serial.print(" ");
+  //Serial.print("Accel_X: "); 
+  Serial.print(accel_event.acceleration.x); Serial.print(" ");
+  //Serial.print("Accel_Y: "); 
+  Serial.print(accel_event.acceleration.y); Serial.print(" ");
+  //Serial.print("Accel_Z: "); 
+  Serial.print(accel_event.acceleration.z); Serial.print(" ");
+  //Serial.print("Mag_X: "); 
+  Serial.print(mx); Serial.print(" ");
+  //Serial.print("Mag_Y: "); 
+  Serial.print(my); Serial.print(" ");
+  //Serial.print("Mag_Z: "); 
+  Serial.println(mz);
 
   delay(10);
 }
