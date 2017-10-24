@@ -11,8 +11,11 @@ There is a simple implementation of a fuzz effect in Puredata plug and play for 
 Instructions:
 
 Connect the 2 sensors, the first one must be in forearm.
-Start puredata and open the GuitarExtended_SimpleFuzz.pd
+
+Start puredata and open the Puredata/GuitarExtended_SimpleFuzz.pd 
+
 Connect the instrument
-Then run the Joint_Angles_Estimation.py 
+
+Then run the python_src/Joint_Angles_Estimation.py 
 
 Check if the communication between pd and the python program is workign as intended
