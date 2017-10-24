@@ -7,3 +7,12 @@ The julia code is a traduction from the c open source AHRS implementation from M
 In the python source directory you can find the working implementation of angle estimation.
 
 There is a simple implementation of a fuzz effect in Puredata plug and play for a bass or guitar.
+
+Instructions:
+
+Connect the 2 sensors, the first one must be in forearm.
+Start puredata and open the GuitarExtended_SimpleFuzz.pd
+Connect the instrument
+Then run the Joint_Angles_Estimation.py 
+
+Check if the communication between pd and the python program is workign as intended
