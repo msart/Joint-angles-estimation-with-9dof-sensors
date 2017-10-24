@@ -1,4 +1,4 @@
-#N canvas 681 300 644 461 10;
+#N canvas 678 304 644 461 10;
 #X obj 36 10 adc~;
 #X obj 100 352 dac~;
 #X obj 90 249 clip~ -0.5 0.5;
@@ -12,7 +12,7 @@ guitar);
 #X obj 90 194 *~;
 #X floatatom 131 164 5 0 0 0 - - -, f 5;
 #X obj 133 85 float;
-#X obj 140 124 * 50;
+#X obj 140 124 * 15;
 #X connect 0 0 8 0;
 #X connect 2 0 1 0;
 #X connect 2 0 1 1;
