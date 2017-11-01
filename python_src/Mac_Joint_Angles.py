@@ -30,10 +30,10 @@ def joint_angle_estimation(sensor1_pitch, sensor2_pitch):
 
 def main():
 
-	s = socket.socket()
-	host = socket.gethostname()
-	port = 3000
-	s.connect((host, port))
+	# s = socket.socket()
+	# host = socket.gethostname()
+	# port = 3000
+	# s.connect((host, port))
 
 	sensor_1 = serial.Serial('/dev/ttyUSB0', 9600) 
 	sensor_2 = serial.Serial('/dev/ttyUSB1', 9600) 
@@ -84,15 +84,15 @@ def main():
 
 
 		angle = joint_angle_estimation(sensor1_pitch, sensor2_pitch)
-		# print("Angle estimation: ", sensor1_pitch, sensor2_pitch, angle)
+		print("Angle estimation: ", sensor1_pitch, sensor2_pitch, angle)
 
 
 		#normalizing and sending message to puredata
 		angle = angle / 180.0
 		message = str(angle) + ";"
-		s.send(message.encode('utf-8'))
+		# s.send(message.encode('utf-8'))
 
-		sleep(0.01)
+		# sleep(0.01)
 
 
 main()
