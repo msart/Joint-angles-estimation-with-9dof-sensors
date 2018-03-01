@@ -6,6 +6,8 @@ from math import asin
 beta = 0.1
 sampleFreq = 10.0
 
+
+#Fastest implementation in python for invsqrt
 def invsqrt(number):
     return number ** -0.5
 
