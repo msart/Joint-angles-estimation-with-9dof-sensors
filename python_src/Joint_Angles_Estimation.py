@@ -6,6 +6,19 @@ import AHRS_Madgwick
 import socket
 from time import sleep
 
+def mean_filter(signal):
+	sum = 0.0
+	for i in signal:
+		sum += i
+	return sum / len(signal) 
+
+def filtered_angle(sample, samples_vector):
+	if len(samples_vector) < 5:
+		samples_vector.append(sample)
+	else:
+		del samples_vector[0]
+		samples_vector.append(sample)
+	return mean_filter(samples_vector)
 
 
 def parse_sensor_data(msg):
@@ -54,43 +67,50 @@ def main():
 	sensor2_q2 = 0.0
 	sensor2_q3 = 0.0
 
+	samples = []
+
 	while True:
 	# for i in range(1,10):
 
 		#sensor 1 reading msg
-		msg = sensor_1.readline()
-		sensor1_gx, sensor1_gy, sensor1_gz, sensor1_ax, sensor1_ay, sensor1_az, sensor1_mx, sensor1_my, sensor1_mz = parse_sensor_data(msg)
-		# print(sensor1_gx, sensor1_gy, sensor1_gz, sensor1_ax, sensor1_ay, sensor1_az, sensor1_mx, sensor1_my, sensor1_mz)
+		msg1 = sensor_1.readline()
+
+		#sensor 2 reading msg
+		msg2 = sensor_2.readline()
+
+		sensor1_gx, sensor1_gy, sensor1_gz, sensor1_ax, sensor1_ay, sensor1_az, sensor1_mx, sensor1_my, sensor1_mz = parse_sensor_data(msg1)
 
 		#sensor 1 updating
 		for i in range(100):
 			sensor1_q0, sensor1_q1, sensor1_q2, sensor1_q3 = AHRS_Madgwick.update(sensor1_gx, sensor1_gy, sensor1_gz, sensor1_ax, sensor1_ay, sensor1_az, sensor1_mx, sensor1_my, sensor1_mz, sensor1_q0, sensor1_q1, sensor1_q2, sensor1_q3)
-		# print(sensor1_q0, sensor1_q1, sensor1_q2, sensor1_q3)
 
 		#sensor 1 calculating angles
 		sensor1_roll, sensor1_pitch, sensor1_yaw = AHRS_Madgwick.compute_angles(sensor1_q0, sensor1_q1, sensor1_q2, sensor1_q3)
-		# print(sensor1_roll, sensor1_pitch, sensor1_yaw)
 
-		#sensor 1 reading msg
-		msg = sensor_2.readline()
-		sensor2_gx, sensor2_gy, sensor2_gz, sensor2_ax, sensor2_ay, sensor2_az, sensor2_mx, sensor2_my, sensor2_mz = parse_sensor_data(msg)
+
+		
+		sensor2_gx, sensor2_gy, sensor2_gz, sensor2_ax, sensor2_ay, sensor2_az, sensor2_mx, sensor2_my, sensor2_mz = parse_sensor_data(msg2)
 
 		#sensor 2 updating
 		for i in range(100):
 			sensor2_q0, sensor2_q1, sensor2_q2, sensor2_q3 = AHRS_Madgwick.update(sensor2_gx, sensor2_gy, sensor2_gz, sensor2_ax, sensor2_ay, sensor2_az, sensor2_mx, sensor2_my, sensor2_mz, sensor2_q0, sensor2_q1, sensor2_q2, sensor2_q3)
-		# print(sensor2_q0, sensor2_q1, sensor2_q2, sensor2_q3)
+
 
 		#sensor 2 calculating angles
 		sensor2_roll, sensor2_pitch, sensor2_yaw = AHRS_Madgwick.compute_angles(sensor2_q0, sensor2_q1, sensor2_q2, sensor2_q3)
-		# print(sensor2_roll, sensor2_pitch, sensor2_yaw)
 
+		# print(msg1)
+		# print(msg2)
 
-		angle = joint_angle_estimation(sensor1_pitch, sensor2_pitch)
-		print("Angle estimation: ", sensor1_pitch, sensor2_pitch, angle)
+		# mais 15 vem de um correção de uma diferença constante nos ângulos
+		# Possíveis problemas: calibração do magnetômetro feito em outro ambiente, diferença na posição dos sensores no braço(um fica mais inclinado pois a superfície do corpo no local não é 100% plana)
+		angle = joint_angle_estimation(sensor1_pitch, sensor2_pitch) + 15 
+		f_angle = filtered_angle(angle, samples)
+		# print("Angle estimation: ", sensor1_pitch, sensor2_pitch, angle, f_angle)
 
 
 		#normalizing and sending message to puredata
-		angle = angle / 180.0
+		angle = f_angle/ 180.0
 		message = str(angle) + ";"
 		s.send(message.encode('utf-8'))
 

@@ -154,7 +154,7 @@ def update( gx,  gy,  gz,  ax,  ay,  az,  mx,  my,  mz, q0, q1, q2, q3):
 		qDot3 = qDot3 - beta * s2
 		qDot4 = qDot4 - beta * s3
 	
-	# aplicando no quaterinon
+	# aplicando no quaternion
 	q0 = q0 + qDot1 * (1.0 / sampleFreq)
 	q1 = q1 + qDot2 * (1.0 / sampleFreq)
 	q2 = q2 + qDot3 * (1.0 / sampleFreq)
