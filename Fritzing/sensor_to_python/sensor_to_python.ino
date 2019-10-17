@@ -28,7 +28,7 @@ float gyro_zero_offsets[3]      = { 0.0F, 0.0F, 0.0F };
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(2000000);
 
 
   // Initialize the sensors.
@@ -100,5 +100,5 @@ void loop(void)
   Serial.println(mz);
 
 
-  delay(10);
+  //delay(1);
 }
